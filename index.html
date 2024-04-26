@@ -720,7 +720,7 @@ console.log( daysSinceStart, currentDate)
             const daysSinceStart = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)) + 1;
 
             let userName = localStorage.getItem('userName');
-            const message = userName ? `Welcome back, ${userName}, to the ${daysSinceStart}th day in ${mandalaName} for ${getPhaseOfDay()} session.` :
+            const message = userName ? `Welcome back, ${userName}, to the ${daysSinceStart}th day on ${currentDate} in ${mandalaName} for ${getPhaseOfDay()} session.` :
                 `Welcome to the ${daysSinceStart}th day in ${mandalaName}.`;
 
             showToast(message);
