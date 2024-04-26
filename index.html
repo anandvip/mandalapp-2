@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags for character set and viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title of the webpage -->
+    <title>Mandala Timer</title>
+    <!-- Embedded CSS styles -->
+    <style>
+        /* Global body styles */
+        body {
+          box-sizing:border-box;
+          margin:0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 0;
+            background-image: url('https://images.unsplash.com/photo-1526779259212-939e64788e3c?crop=entropy&cs=srgb&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MTMyNDY1NjV8&ixlib=rb-4.0.3&q=85');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+      header{
+           padding: 20px;
+    margin-bottom: 20px;
+    background-color: #dddddd6e;
+    width: 100vw;
+    /* border-radius: 10px; */
+    filter: brightness(0.5);
+    box-shadow: inset -7px -2px 0px 20px #dddddd6e;
+      }
+
+        /* Grid container for layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Styling for individual cards */
+        .card {
+          height:fit-content;
+            background-color: #fffff6e;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          background-image: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%239C92AC" fill-opacity="0.4" fill-rule="evenodd"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
+        }
+
+        /* Timer display styling */
+        .timer {
+            font-size: 7rem;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        /* Styling for history sections */
+        .history-section {
+            background-color: #ffffff6e;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        /* Styling for buttons */
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Button hover effect */
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Toast notification styling */
+        .intrusive-toast {
+          width:fi-content;
+            position: fixed;
+          width:fit-content;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          box-shadow: 7px 7px 13px 3px #0f0f0e78;
+<!--           background-image: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%239C92AC" fill-opacity="0.4" fill-rule="evenodd"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E'); -->
+        }
+
+        #toast,#timerDisplay {
+           position: fixed;
+          width:fit-content;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color:#ffffff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          text-wrap:nowrap;
+        }
+
+        /* Hidden elements */
+        .hidden {
+            display: none;
+        }
+
+        /* Dialog styling */
+        .dialog {
+            display: none;
+            width: 100dvw;
+            height: 100dvh;
+            background-image: url('https://images.unsplash.com/photo-1542417938-a39dba3afeb4?crop=entropy&cs=srgb&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MTM3NzI3NjN8&ixlib=rb-4.0.3&q=85');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 9999;
+          position:absolute;
+          top:0;
+          left:0
+        }
+
+        /* Close button styling */
+        .close {
+            color: red;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* Collapsible content styling */
+        .content {
+            display: none;
+        }
+
+        .intro {
+            font-size: 0.8rem;
+        }
+
+        #mandalOngoing {
+            text-transform: uppercase;
+        }
+
+        .user-name-input {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .close-icon {
+            position: absolute;
+            top: 3px;
+            right: 10px;
+            cursor: pointer;
+        }
+      .history-section{
+        background-image: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%239C92AC" fill-opacity="0.4" fill-rule="evenodd"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
+      }
+      .history-section h3{
+        border:0.5pt solid;
+background-color:#9b5de5;
+        border-radius:5px;
+        padding:10px;
+        width:fit-content
+      }
+      .medHlog {
+  border-bottom:0.5pt solid aqua;
+        padding:15px;
+        margin-bottom:5px;
+        background-color:#dddddd6e;
+        border-radius:5px;
+        width:fill-content
+}
+      .medHlog:after{
+        content:"notes()";
+        position:absolute;
+        margin-left:10px;
+        color:green
+       
+      }
+      .medHlog:hover{
+        background-color:#000;
+        color:#fff
+      }
+      .start{
+        background-color:green;
+        width:fit-content
+      }
+      .stop{
+        background-color:red;
+        width:fit-content;
+        margin-left:5px
+      }
+      .clos{
+        width:fit-content;
+        margin-left:5px
+      }
+      .close-icon {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    cursor: pointer;
+    color: red;
+}
+  /* Adjust background image */
+
+/* Add accent color for buttons */
+button {
+  background-color: #9b5de5; /* Example accent color */
+}
+
+/* Improve typography */
+body {
+  font-family: "Merriweather", serif;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+}
+
+/* Enhance card styling */
+.card {
+  background-image: linear-gradient(to bottom right, #f8f9fa, #e9ecef);
+}
+
+/* Dark theme adjustments */
+body.dark-theme {
+  background-color: #212529;
+  color: #f8f9fa;
+}
+
+body.dark-theme .card {
+  background-image: linear-gradient(to bottom right, #343a40, #212529);
+}
+
+/* Animations */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+.exists{
+            color:#fff
+        }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 id="mandalOngoing">[mandal name here]</h1>
+    </header>
+
+    <!-- Grid container for layout -->
+    <div class="grid-container">
+        <!-- Card for mandala creation -->
+        <div class="card">
+          <h2></h2>
+          <p></p>
+            <button class="mandal-button" onclick="openDialog()">Mandal Button</button>
+
+            <!-- Dialog box for mandala creation -->
+            <div id="myDialog" class="dialog">
+                <div class="dialog-content">
+                    <button class="close" onclick="closeDialog()">closeⓧ</button>
+                    <main>
+                        <!-- Mandal creation section -->
+                        <section id="mandalCreation">
+    <button id="createMandal" onclick="checkLocalStorage()">Create New Mandal</button>
+</section>
+    <div id="intrusiveToast" class="hidden">
+    <h2>Create a New Mandal</h2>
+    <input type="text" id="mandalName" placeholder="Mandal Focus or Intention" required>
+    <select id="mandalDuration" required>
+        <option value="48">48 days (96 sessions)</option>
+        <option value="90">90 days (1 session/day)</option>
+    </select>
+    <input type="date" id="startDate" placeholder="Start Date">
+    <button onclick="saveMandal()">Save Mandal</button>
+</div>
+<!-- Toast Notification -->
+<div id="toastNotification" class="hidden">
+    <p id="toastMessage"></p>
+</div>
+                        <div id="mandalForm" class="hidden">
+                                <input type="text" id="mandalName" placeholder="Mandal Focus or Intention">
+                                <select id="mandalDuration">
+                                    <option value="48">48 days (96 sessions)</option>
+                                    <option value="90">90 days (1 session/day)</option>
+                                </select>
+                                <button id="saveMandal">Save Mandal</button>
+                            </div>
+                       <!-- Toast Notification -->
+<div id="toastNotification" class="hidden">
+    <p id="toastMessage"></p>
+
+
+                        <!-- Display found information -->
+<div class="exists">
+    <h3>This Already Exists</h3><sup>Kindly!, Let ongoing Mandal finish first! thanks</sup>
+</div>
+                        <!-- Session tracking section -->
+                        <section id="sessionTracking">
+                            <button id="startSession" class="hidden">Start Session</button>
+                            <div id="timerDisplay" class="hidden">13:00</div>
+                        </section>
+                    </main>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for mandala details -->
+        <div class="card">
+            <h2 id="mandalaName"></h2>
+            <p class="day-count"></p>
+            <button id="createSession">Create a Meditation Session</button>
+        </div>
+
+        <!-- History section for meditation -->
+        <div class="history-section">
+            <div class="collapsible" onclick="toggleCollapsible('meditationHistory')">
+                <h3>your Meditation History</h3>
+            </div>
+            <span class="intro">Here, you can view your past meditation sessions. It's a record of your journey towards mindfulness.</span>
+            <div class="content" id="meditationHistory">
+                <p>Here, you can view your past meditation sessions. It's a record of your journey towards mindfulness.</p>
+            </div>
+        </div>
+
+        <!-- History section for mandala -->
+        <div class="history-section">
+            <div class="collapsible" onclick="toggleCollapsible('mandalHistory')">
+                <h3>your Mandal History</h3>
+            </div>
+            <span class="intro">Track the progress of your mandalas here. See how far you've come on your spiritual journey.</span>
+            <div class="content" id="mandalHistory">
+                <p>Track the progress of your mandalas here. See how far you've come on your spiritual journey.</p>
+            </div>
+        </div>
+
+        <!-- Timer dialog -->
+        <div id="timerDialog" class="hidden">
+            <div class="timer">13:00</div>
+            <button class="start" onclick="startTimer()">Start</button>
+            <button class="stop"onclick="stopTimer()">Stop</button>
+            <button class="clos" onclick="closeTimer()">Close</button>
+        </div>
+
+        <!-- Toast notifications -->
+        <div id="toast" style="display:none;"></div>
+        <div id="intrusiveToast" style="display:none;"></div>
+    </div>
+
+    <!-- Embedded JavaScript -->
+    <script>
+        // Variable declarations
+        let startDate; // Store the start time of the session
+        let timerInterval; // Store the setInterval function for the timer
+        let timerElement; // Reference to the timer display element
+        let minutes = 13; // Initial minutes for the timer
+        let seconds = 0; // Initial seconds for the timer
+        let sessionCompleted = false; // Flag to track session completion
+
+        // Execute when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select timer element
+            timerElement = document.querySelector('.timer');
+
+            // Add event listener to create session button
+            document.getElementById('createSession').addEventListener('click', function () {
+                document.getElementById('timerDialog').classList.remove('hidden');
+                sessionCompleted = false;
+            });
+
+            // Display meditation and mandala history
+            displayMeditationHistory();
+            displayMandalHistory();
+
+            // Check for stored mandala name and display a welcome message
+            const storedName = localStorage.getItem('mandalaName');
+            if (storedName) {
+                const days = JSON.parse(localStorage.getItem('meditationHistory')).length + 1;
+                showToast(`Welcome back ${storedName} to ${JSON.parse(localStorage.getItem('mandalaDetails')).name}. This is your ${days}th day of meditation.`);
+              
+            }
+        });
+
+        // Open the mandala creation dialog
+        function openDialog() {
+            document.getElementById("myDialog").style.display = "block";
+        }
+
+        // Close the mandala creation dialog
+        function closeDialog() {
+            document.getElementById("myDialog").style.display = "none";
+        }
+
+        // Start the meditation timer
+        function startTimer() {
+            startDate = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        // Stop the meditation timer
+        function stopTimer() {
+            clearInterval(timerInterval);
+            if (!sessionCompleted) {
+                logMeditationHistory(false);
+                sessionCompleted = true;
+            }
+        }
+
+        // Close the timer dialog
+        function closeTimer() {
+            document.getElementById('timerDialog').classList.add('hidden');
+        }
+
+        // Update the countdown timer
+// Update the countdown timer
+function updateTimer() {
+    seconds--;
+
+    if (seconds < 0) {
+        seconds = 59;
+        minutes--;
+    }
+
+    // Update timer display
+    timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+    // If timer reaches 0, stop the timer and log the session
+    if (minutes === 0 && seconds === 0) {
+        clearInterval(timerInterval);
+        showToast(`Your ${getPhaseOfDay()} meditation session completed @${getCurrentDateTime()}`);
+        logMeditationHistory(true);
+    }
+}
+
+
+        // Get the phase of the day
+        function getPhaseOfDay() {
+            const hour = new Date().getHours();
+            if (hour < 5) return 'early morning';
+            if (hour < 12) return 'morning';
+            if (hour < 18) return 'afternoon';
+            return 'evening';
+        }
+
+        // Get current date and time
+        function getCurrentDateTime() {
+            const now = new Date();
+            return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+        }
+
+        // Display toast notification
+        function showToast(message) {
+            const toastElement = document.getElementById('toast');
+            toastElement.textContent = message;
+            toastElement.style.display = 'block';
+            setTimeout(() => {
+                toastElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // Log meditation history
+        function logMeditationHistory(completed) {
+            const currentDate = new Date();
+            const endDate = getCurrentDateTime();
+            const durationInSeconds = (currentDate - startDate) / 1000;
+
+            const minutes = Math.floor(durationInSeconds / 60);
+            const seconds = durationInSeconds % 60;
+
+            const sessionDetails = {
+                startDate: startDate.toLocaleString(),
+                endDate,
+                duration: `${minutes} minutes ${seconds} seconds`,
+                completed
+            };
+
+            const meditationHistory = JSON.parse(localStorage.getItem('meditationHistory')) || [];
+            meditationHistory.push(sessionDetails);
+            localStorage.setItem('meditationHistory', JSON.stringify(meditationHistory));
+            displayMeditationHistory();
+        }
+
+        // Display meditation history
+        function displayMeditationHistory() {
+            const history = JSON.parse(localStorage.getItem('meditationHistory')) || [];
+            const historyContainer = document.getElementById('meditationHistory');
+            historyContainer.innerHTML = '';
+            history.forEach((entry, index) => {
+                const entryElement = document.createElement('div');
+      
+              // entryElement.classList.add('medHlog'); 
+              
+                entryElement.textContent = `${entry.startDate} - ${entry.endDate} - Completed: ${entry.completed ? 'Yes' : 'No'}`;
+                historyContainer.appendChild(entryElement);
+            });
+        }
+
+        // Display mandala history
+        function displayMandalHistory() {
+            const history = JSON.parse(localStorage.getItem('mandalProgress')) || [];
+            const historyContainer = document.getElementById('mandalHistory');
+            historyContainer.innerHTML = '';
+            history.forEach((entry, index) => {
+                const entryElement = document.createElement('div');
+                entryElement.textContent += `${entry.name} - Created on: ${entry.creationDate} - Ending on: ${entry.endDate}`;
+                historyContainer.appendChild(entryElement);
+            });
+        }
+
+        // Toggle collapsible content
+        function toggleCollapsible(id) {
+            const content = document.getElementById(id);
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+            } else {
+                content.style.display = 'none';
+            }
+        }
+    </script>
+    <script>
+        // Function to update mandala header from local storage
+        function updateMandalaHeaderFromLocalStorage() {
+            const history = JSON.parse(localStorage.getItem('mandalProgress')) || [];
+
+            if (history.length === 0) {
+              
+                return;
+            }
+
+            const firstEntry = history[0];
+            const mandalaName = firstEntry.name;
+            const creationDate = new Date(firstEntry.creationDate);
+            const currentDate = new Date();
+            const daysSinceStart = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)) + 1;
+console.log( daysSinceStart, currentDate)
+            const mandalaHeaderElement = document.getElementById('mandalOngoing');
+
+            if (mandalaHeaderElement) {
+                mandalaHeaderElement.textContent = `${mandalaName} - ${daysSinceStart}th day in`;
+            } else {
+                console.error('Element with ID "mandalOngoing" not found.');
+            }
+        }
+
+        // Function to display toast
+        function showToast(message) {
+            const toastElement = document.getElementById('toast');
+            let toastContent = `
+                <div class="intrusive-toast">
+                    <span>${message}</span>
+            `;
+
+            if (!localStorage.getItem('userName')) {
+                toastContent += `
+                    <input type="text" id="userNameInput" placeholder="Enter your name" class="user-name-input">
+                `;
+            }
+
+            toastContent += `
+                    <span onclick="hideToast()" class="close-icon">ⓧ</span>
+                </div>
+            `;
+
+            toastElement.innerHTML = toastContent;
+            toastElement.style.display = 'block';
+        }
+
+        // Function to hide toast
+        function hideToast() {
+            const toastElement = document.getElementById('toast');
+            toastElement.style.display = 'none';
+        }
+
+        // Function to save user name
+        function saveUserName() {
+            const userName = document.getElementById('userNameInput').value;
+
+            if (userName) {
+                localStorage.setItem('userName', userName);
+                hideToast();
+                welcomeUser();
+            } else {
+                alert('Please enter your name.');
+            }
+        }
+
+        // Function to welcome user
+        function welcomeUser() {
+            const history = JSON.parse(localStorage.getItem('mandalProgress')) || [];
+
+            if (history.length === 0) {
+                console.error('No entries found in mandalProgress.');
+                return;
+            }
+
+            const firstEntry = history[0];
+            const mandalaName = firstEntry.name;
+            const creationDate = new Date(firstEntry.creationDate);
+
+            if (isNaN(creationDate.getTime())) {
+                console.error('Invalid creation date format');
+                return;
+            }
+
+            const currentDate = new Date();
+            const daysSinceStart = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)) + 1;
+
+            let userName = localStorage.getItem('userName');
+            const message = userName ? `Welcome back, ${userName}, to the ${daysSinceStart}th day in ${mandalaName} for ${getPhaseOfDay()} session` :
+                `Welcome to the ${daysSinceStart}th day in ${mandalaName}.${getPhaseOfDay} session`;
+
+            showToast(message);
+        }
+
+        // Invoke functions
+        updateMandalaHeaderFromLocalStorage();
+        welcomeUser();
+    </script>
+   <script>
+        // Function to update mandala header from local storage
+        function updateMandalaHeaderFromLocalStorage() {
+            const history = JSON.parse(localStorage.getItem('mandalProgress')) || [];
+
+            if (history.length === 0) {
+                console.error('No entries found in mandalProgress.');
+                return;
+            }
+
+            const firstEntry = history[0];
+            const mandalaName = firstEntry.name;
+            const creationDate = new Date(firstEntry.creationDate);
+            const currentDate = new Date();
+            const daysSinceStart = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)) + 1;
+
+            const mandalaHeaderElement = document.getElementById('mandalOngoing');
+
+            if (mandalaHeaderElement) {
+                mandalaHeaderElement.textContent = `${mandalaName} - ${daysSinceStart}th day in`;
+            } else {
+                console.error('Element with ID "mandalOngoing" not found.');
+            }
+        }
+
+        // Function to display toast
+        function showToast(message) {
+            const toastElement = document.getElementById('toast');
+            let toastContent = `
+                <div class="intrusive-toast">
+                    <span>${message}</span>
+            `;
+
+            if (!localStorage.getItem('userName')) {
+                toastContent += `
+                    <input type="text" id="userNameInput" placeholder="Enter your name" class="user-name-input">
+                `;
+            }
+
+            toastContent += `
+                    <span onclick="hideToast()" class="close-icon">ⓧ</span>
+                </div>
+            `;
+
+            toastElement.innerHTML = toastContent;
+            toastElement.style.display = 'block';
+        }
+
+        // Function to hide toast
+        function hideToast() {
+            const toastElement = document.getElementById('toast');
+            toastElement.style.display = 'none';
+        }
+
+        // Function to save user name
+        function saveUserName() {
+            const userName = document.getElementById('userNameInput').value;
+
+            if (userName) {
+                localStorage.setItem('userName', userName);
+                hideToast();
+                welcomeUser();
+            } else {
+                alert('Please enter your name.');
+            }
+        }
+
+        // Function to welcome user
+        function welcomeUser() {
+            const history = JSON.parse(localStorage.getItem('mandalProgress')) || [];
+
+            if (history.length === 0) {
+                console.error('No entries found in mandalProgress.');
+                return;
+            }
+
+            const firstEntry = history[0];
+            const mandalaName = firstEntry.name;
+            const creationDate = new Date(firstEntry.creationDate);
+
+            if (isNaN(creationDate.getTime())) {
+                console.error('Invalid creation date format');
+                return;
+            }
+
+            const currentDate = new Date();
+            const daysSinceStart = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)) + 1;
+
+            let userName = localStorage.getItem('userName');
+            const message = userName ? `Welcome back, ${userName}, to the ${daysSinceStart}th day in ${mandalaName} for ${getPhaseOfDay()} session.` :
+                `Welcome to the ${daysSinceStart}th day in ${mandalaName}.`;
+
+            showToast(message);
+        }
+
+        // Invoke functions
+        updateMandalaHeaderFromLocalStorage();
+        welcomeUser();
+    </script>
+  <script>
+    // Function to check local storage and show dialog if necessary
+    function checkLocalStorage() {
+        const userName = localStorage.getItem('userName');
+        const mandalProgress = JSON.parse(localStorage.getItem('mandalProgress'));
+
+        if (!userName || !mandalProgress) {
+            showIntrusiveToast();
+        } else {
+            showToast(`Welcome back, ${userName}!`);
+        }
+    }
+
+    // Function to show the intrusive toast for Mandal Creation
+    function showIntrusiveToast() {
+        const toastElement = document.getElementById('intrusiveToast');
+        toastElement.classList.remove('hidden');
+    }
+
+    // Function to save Mandal details
+    function saveMandal() {
+        const mandalName = document.getElementById('mandalName').value;
+        const mandalDuration = document.getElementById('mandalDuration').value;
+        const startDate = document.getElementById('startDate').value || getNextDay();
+
+        // Validate fields
+        if (!mandalName || !mandalDuration || !startDate) {
+            showToast('All fields are required.');
+            return;
+        }
+
+        // Calculate session count based on mandal duration
+        const sessionCount = mandalDuration === '48' ? 96 : 90;
+
+        // Save mandal details to local storage
+        const mandalDetails = {
+            name: mandalName,
+            duration: mandalDuration,
+            startDate,
+            sessionCount
+        };
+
+        localStorage.setItem('mandalProgress', JSON.stringify([mandalDetails]));
+
+        // Inform user about session count
+        showToast(`Mandal created with ${sessionCount} sessions.`);
+    }
+
+    // Function to get next day date
+    function getNextDay() {
+        const today = new Date();
+        const nextDay = new Date(today);
+        nextDay.setDate(today.getDate() + 1);
+        return nextDay.toISOString().split('T')[0];
+    }
+
+    // Function to display toast notification
+    function showToast(message) {
+        // Implementation of showToast function
+    }
+
+    // Function to hide intrusive toast
+    function hideIntrusiveToast() {
+        const toastElement = document.getElementById('intrusiveToast');
+        toastElement.classList.add('hidden');
+    }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    checkLocalStorage();
+});
+
+// Function to check local storage and show dialog if necessary
+function checkLocalStorage() {
+    const userName = localStorage.getItem('userName');
+    const mandalProgress = JSON.parse(localStorage.getItem('mandalProgress'));
+
+    if (!userName || !mandalProgress) {
+        showIntrusiveToast();
+    } else {
+        showToast(`Welcome back, ${userName}!`);
+    }
+}
+
+// Function to show the intrusive toast for Mandal Creation
+function showIntrusiveToast() {
+    const toastElement = document.getElementById('intrusiveToast');
+    toastElement.classList.remove('hidden');
+}
+
+// Function to save Mandal details
+function saveMandal() {
+    const mandalName = document.getElementById('mandalName').value;
+    const mandalDuration = document.getElementById('mandalDuration').value;
+    const startDate = document.getElementById('startDate').value || getNextDay();
+
+    // Validate fields
+    if (!mandalName || !mandalDuration || !startDate) {
+        showToast('All fields are required.');
+        return;
+    }
+
+    // Calculate session count based on mandal duration
+    const sessionCount = mandalDuration === '48' ? 96 : 90;
+
+    // Save mandal details to local storage
+    const mandalDetails = {
+        name: mandalName,
+        duration: mandalDuration,
+        creationDate: startDate,
+        sessionCount,
+        endDate: calculateEndDate(startDate, sessionCount)
+    };
+
+    localStorage.setItem('mandalProgress', JSON.stringify([mandalDetails]));
+
+    // Inform user about session count
+    showToast(`Mandal created with ${sessionCount} sessions.`);
+}
+
+// Function to get next day date
+function getNextDay() {
+    const today = new Date();
+    const nextDay = new Date(today);
+    nextDay.setDate(today.getDate() + 1);
+    return nextDay.toISOString().split('T')[0];
+}
+
+// Function to calculate end date based on start date and session count
+function calculateEndDate(startDate, sessionCount) {
+    const startDateObj = new Date(startDate);
+    startDateObj.setDate(startDateObj.getDate() + sessionCount - 1);
+    return startDateObj.toISOString().split('T')[0];
+}
+
+// Function to display toast notification
+function showToast(message) {
+    const toastElement = document.getElementById('toastNotification');
+    const toastMessageElement = document.getElementById('toastMessage');
+
+    toastMessageElement.innerText = message;
+    toastElement.classList.remove('hidden');
+
+    setTimeout(() => {
+        toastElement.classList.add('hidden');
+    }, 3000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkLocalStorage();
+});
+
+// Function to check local storage and show dialog if necessary
+function checkLocalStorage() {
+    const userName = localStorage.getItem('userName');
+    const mandalProgress = JSON.parse(localStorage.getItem('mandalProgress'));
+
+    const thisExistsElement = document.getElementById('thisExists');
+
+    if (!userName || !mandalProgress) {
+        showIntrusiveToast();
+    } else {
+        showToast(`Welcome back, ${userName}!`);
+
+        thisExistsElement.innerHTML = `
+            <p>User Name: ${userName}</p>
+            <p>Mandal Progress:</p>
+            <ul id="mandalList"></ul>
+        `;
+
+        const mandalListElement = document.getElementById('mandalList');
+        mandalProgress.forEach((mandal, index) => {
+            mandalListElement.innerHTML += `<li>Mandal ${index + 1}: ${mandal.name}</li>`;
+        });
+    }
+}
+</script>
+<script>
+const buttonsWithText = document.querySelectorAll("button:scope");
+
+buttonsWithText.forEach((button) => {
+  if (button.textContent.trim() === "Start") {
+    button.style.backgroundColor = "green";
+    button.style.color = "white";
+    button.style.padding = "10px";
+    button.style.border = "none";
+    button.style.fontSize = "16px";
+  }
+});
+function isMandalActive() {
+  var mandalProgress = JSON.parse(localStorage.getItem('mandalProgress')) || [];
+  return mandalProgress.length > 0 && !mandalProgress[0].completed;
+ 
+}
+isMandalActive()
+const history = JSON.parse(localStorage.getItem('mandalProgress')) || [];
+
+</script>
+</body>
+
+</html>
