@@ -32,9 +32,15 @@
 
         /* Grid container for layout */
         .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 4px;
+    place-content: center;
+    height: 100vh;
+    overflow: scroll;
+    margin-bottom: 100px;
+    text-align: center;
+    padding-left: 50px;
         }
 
         /* Styling for individual cards */
