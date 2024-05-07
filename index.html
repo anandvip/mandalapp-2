@@ -400,7 +400,7 @@ button:hover {
             const storedName = localStorage.getItem('mandalaName');
             if (storedName) {
                 const days = JSON.parse(localStorage.getItem('meditationHistory')).length + 1;
-                showToast(`Welcome back ${storedName} to ${JSON.parse(localStorage.getItem('mandalaDetails')).name}. This is your ${days}th day of meditation.`);
+                showToast(`Welcome back ${storedName} to ${JSON.parse(localStorage.getItem('mandalaDetails')).name}. This is your day ${days} of meditation.`);
               
             }
         });
@@ -560,7 +560,7 @@ console.log( daysSinceStart, currentDate)
             const mandalaHeaderElement = document.getElementById('mandalOngoing');
 
             if (mandalaHeaderElement) {
-                mandalaHeaderElement.textContent = `${mandalaName} - ${daysSinceStart}th day in`;
+                mandalaHeaderElement.textContent = `${mandalaName} - day ${daysSinceStart} in`;
             } else {
                 console.error('Element with ID "mandalOngoing" not found.');
             }
@@ -631,7 +631,7 @@ console.log( daysSinceStart, currentDate)
 
             let userName = localStorage.getItem('userName');
             const message = userName ? `Welcome back, ${userName}, to the day ${daysSinceStart} in ${mandalaName} for ${getPhaseOfDay()} session` :
-                `Welcome to the day ${daysSinceStart} day in ${mandalaName}.${getPhaseOfDay} session`;
+                `Welcome to the day ${daysSinceStart} day in ${mandalaName}.${getPhaseOfDay()} session`;
 
             showToast(message);
         }
